@@ -10,7 +10,11 @@
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
-    <button is="create_button" onclick="create('test', ()=>console.log('test'))">create</button>
+    <p id="sheet">sheet</p>
+    <input id="sheet" oninput="updateSheet(this)" />
+    <p id="title">title</p>
+    <input id="title" oninput="updateTitle(this)" />
+    <button id="create_button" onclick="create(this)" >create</button>
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
@@ -116,14 +120,31 @@
         }
       }
 
-      function create(title, callback) {
+      const input = document.querySelector("input");
+      let sheet = ""
+      let title = ""
+      function updateTitle(e) {
+	title = e.value
+      }
+      function updateSheet(e) {
+	sheet = e.value
+      }
+      function create() {
+	document.querySelector("p#sheet").innerText = sheet
+	console.log("sheet", sheet)
+	document.querySelector("p#title").innerText = title
+	console.log("title", title)
 	try {
 	  gapi.client.sheets.spreadsheets.create({
 	    properties: {
 	      title: title,
 	    },
+	    sheets: [
+	      {
+		title: sheet,
+	      }
+	    ]
 	  }).then((response) => {
-	    if (callback) callback(response);
 	    console.log('Spreadsheet ID: ' + response.result.spreadsheetId);
 	  });
 	} catch (err) {
