@@ -10,6 +10,7 @@
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
+    <button is="create_button" onclick="create('test', ()=>console.log('test'))">create</button>
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
@@ -19,7 +20,6 @@
       /* exported handleAuthClick */
       /* exported handleSignoutClick */
 
-      // TODO(developer): Set to client ID and API key from the Developer Console
       const CLIENT_ID = '1017606860542-gfjpah6ledhelbequlgdgqtp1mf4h80e.apps.googleusercontent.com';
       const API_KEY = 'AIzaSyAE2PIjOQwqpwS8PXCTFcWv2UOWp4ULwhY';
 
@@ -34,7 +34,7 @@
       let gapiInited = false;
       let gisInited = false;
 
-      document.getElementById('authorize_button').style.visibility = 'hidden';
+      //document.getElementById('authorize_button').style.visibility = 'hidden';
       document.getElementById('signout_button').style.visibility = 'hidden';
 
       /**
@@ -114,6 +114,22 @@
           document.getElementById('authorize_button').innerText = 'Authorize';
           document.getElementById('signout_button').style.visibility = 'hidden';
         }
+      }
+
+      function create(title, callback) {
+	try {
+	  gapi.client.sheets.spreadsheets.create({
+	    properties: {
+	      title: title,
+	    },
+	  }).then((response) => {
+	    if (callback) callback(response);
+	    console.log('Spreadsheet ID: ' + response.result.spreadsheetId);
+	  });
+	} catch (err) {
+	  document.getElementById('content').innerText = err.message;
+	  return;
+	}
       }
 
       /**
